@@ -6,12 +6,26 @@ var budgetController = (function(){
 		this.id = id;
 		this.description=description;
 		this.value=value;
+		this.percentage = -1;
 	}
 	var Income = function(id,description,value){
 		this.id = id;
 		this.description=description;
 		this.value=value;
 	}
+
+	Expense.prototype.calcPercentage = function(totalIncome){
+		if(totalIncome > 0){
+		this.percentage = Math.round((this.value/totalIncome) * 100);
+		}
+		else{
+			this.percentage = -1;
+		}
+	};
+
+	Expense.prototype.getPercentage = function(){
+		return this.percentage;
+	};
 
 	var calculateTotal  = function(type){
 		var sum = 0;
@@ -97,6 +111,19 @@ var budgetController = (function(){
 
 		},
 
+		calculatePercentages: function(){
+			data.allItems.exp.forEach(function(cur){
+				cur.calcPercentage(data.total.inc);
+			});
+		},
+
+		getPercentage:function(){
+			var allPerc = data.allItems.exp.map(function(cur){
+				return cur.getPercentage();
+			});
+			return allPerc;
+		},
+
 		getBudget: function(){
 			return {
 				budget:data.budget,
@@ -127,7 +154,8 @@ var UIController = (function(){
 		incomeLabel:'.budget__income--value',
 		expenseLabel:'.budget__expenses--value',
 		percentageLabel:'.budget__expenses--percentage',
-		container:'.container'
+		container:'.container',
+		expensePercLabel:'.item__percentage'
 	};
 
 
@@ -197,6 +225,35 @@ var UIController = (function(){
 				document.querySelector(DOMstring.percentageLabel).textContent = '---';
 			}
 		},
+
+		displayPercentages:function(percentages){
+
+			var fields = document.querySelectorAll(DOMstring.expensePercLabel);
+
+			var nodeListForEach = function(list,callback){
+				for(var i =0; i<list.length; i++){
+					callback(list[i],i);
+				}
+			}
+			nodeListForEach(fields,function(current, index){
+				if(percentages[index]>0){
+					current.textContent = percentages[index] +'%';
+				}else{
+					current.textContent = '---';
+				}
+				
+			});
+		},
+
+		formatNumber(num,type){
+			/*
+			+ or -before number
+			exactily 2 decimal points
+			comma separating the thousands
+
+			2310.4567 -> +2,310.46
+			*/
+		},
 		//make DOMstring public
 		getDOMstring : function(){
 			return DOMstring;
@@ -240,6 +297,16 @@ var Controller = (function(budgetCtrl,UICtrl){
 		UICtrl.displayBudget(budget);
 
 	};
+
+	var updatePercentages = function(){
+
+		//1. calculate percentage
+		budgetCtrl.calculatePercentages();
+		//2.read percentages from the budget controller
+		var percentages = budgetCtrl.getPercentage();
+		//3. update the UI with the new percentage
+		UICtrl.displayPercentages(percentages);
+	}
 	var ctrlAddItem = function(){
 		var input,newItem;
 
@@ -259,8 +326,9 @@ var Controller = (function(budgetCtrl,UICtrl){
 
 			//5. Calculate and update the budget
 			updateBudget();
-			//6. display the budget	
 
+			//6. calculate and update percentages	
+			updatePercentages();
 		}
 
 	};
@@ -285,6 +353,9 @@ var Controller = (function(budgetCtrl,UICtrl){
 
 			//3. update and show the new budget
 			updateBudget();
+
+			//4. update and calculate percentages
+			updatePercentages();
 		}
 	};
 	return {
