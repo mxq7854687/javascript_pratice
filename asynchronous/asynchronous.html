@@ -67,21 +67,43 @@
                 }, 1500,publisher);
             });
         };
-        getIDs
-        .then(IDs=>{
-            console.log(IDs);
-            return getRecipe(IDs[2]);
+        // getIDs
+        // .then(IDs=>{
+        //     console.log(IDs);
+        //     return getRecipe(IDs[2]);
+        // })
+        // .then(recipe=>{
+        //     console.log(recipe);
+        //     return getRelated("jonas");
+        // })
+        // .then(recipe =>{
+        //     console.log(recipe);
+        // })
+        // .catch(error=>{
+        //     console.log(error);
+        // })
+            //// another implementation
+        // async function getRecipesAW(){
+        //     const IDs = await getIDs;
+        //     console.log(IDs);
+        //     const recipe = await getRecipe(IDs[2]);
+        //     console.log(recipe);
+        //     const related = await getRelated('JJ');
+        //     console.log(related);
+        //     return recipe;
+        // }
+        // getRecipesAW().then(result=>console.log(`${result} is the best ever!`));
+
+
+            ///// use crossorigin.me to get the resource from website
+        fetch("https://crossorigin.me/https://www.metaweather.com/api/location/2487956/")
+        .then(result => {
+            console.log(result);
         })
-        .then(recipe=>{
-            console.log(recipe);
-            return getRelated("jonas");
-        })
-        .then(recipe =>{
-            console.log(recipe);
-        })
-        .catch(error=>{
+        .catch(error =>{
             console.log(error);
-        })
+        });
+
     </script>
 </body>
 </html>
