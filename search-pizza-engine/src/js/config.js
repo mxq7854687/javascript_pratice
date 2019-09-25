@@ -1,2 +1,2 @@
 export const proxy = 'https://crossorigin.me/';
-export const key = "374ee35083b9d6960df0e9a1e7af04db";
+export const key = "ce9bf8b06a4311af7a1e999f5e37454c";
