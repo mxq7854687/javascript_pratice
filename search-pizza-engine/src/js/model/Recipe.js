@@ -31,8 +31,10 @@ export default class Recipe{
     }
 
     parseIngredients(){
-        const unitLong = ["tablesponns","tablespoon","ounces","ounce","teaspoons","teaspoon","cups","pounds"];
+        const unitLong = ["tablespoons","tablespoon","ounces","ounce","teaspoons","teaspoon","cups","pounds"];
         const unitShort = ["tbsp","tbsp","oz","oz","tsp","tsp","cup","pound"];
+        const units = [...unitShort, 'kg', 'g'];
+
         const newIngredients = this.ingredients.map(el => {
             // 1) Uniform units
             let ingredient = el.toLowerCase();  //use let because we may mutate the variable
@@ -46,11 +48,28 @@ export default class Recipe{
             // 3) Parse ingredients into count , unit and ingredient
             const arrIng = ingredient.split(' ');
             //findIndex pass a callback function which return index which the el2 exist or -1 if not exist
-            const unitIndex = arrIng.findIndex(el2 => unitShort.includes(el2));
+            const unitIndex = arrIng.findIndex(el2 => units.includes(el2));
 
             let objIng;
             if(unitIndex > -1){
                 //There is a unit
+                // Ex. 4 1/2 cups, arrCount is [4, 1/2] --> eval("4+1/2") --> 4.5
+                // Ex. 4 cups, arrCount is [4]
+                const arrCount = arrIng.slice(0,unitIndex);
+
+                let count;
+                if(arrCount.length === 1){
+                    count = eval(arrIng[0].replace('-','+'));
+                }else{
+                    count = eval(arrIng.slice(0,unitIndex).join('+'));
+                }
+                
+                objIng = {
+                    count,
+                    unit: arrIng[unitIndex],
+                    ingredient: arrIng.slice(unitIndex).join(" ")
+                };
+
             }else if(parseInt(arrIng[0],10)){
                 //There is no unit but the 1st element is a number
                 objIng ={
@@ -66,7 +85,7 @@ export default class Recipe{
                     ingredient          // ingredient : ingredient
                 }
             }
-            return ingredient;
+            return objIng;
         });
         this.ingredients = newIngredients;
     }

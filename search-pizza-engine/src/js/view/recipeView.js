@@ -1,14 +1,17 @@
 import { elements} from './base';
 
-const createIngraedient = ingredient => `
+export const clearRecipe = () => {
+    elements.recipe.innerHTML="";
+}
+const createIngraedient = ingredients => `
     <li class="recipe__item">
         <svg class="recipe__icon">
             <use href="img/icons.svg#icon-check"></use>
         </svg>
-        <div class="recipe__count">${ingredient.count}</div>
+        <div class="recipe__count">${ingredients.count}</div>
         <div class="recipe__ingredient">
-            <span class="recipe__unit">${ingredient.unit}</span>
-            ${ingredient.ingredient}
+            <span class="recipe__unit">${ingredients.unit}</span>
+            ${ingredients.ingredient}
         </div>
     </li>
 `;
