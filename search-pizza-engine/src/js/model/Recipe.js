@@ -14,6 +14,7 @@ export default class Recipe{
             this.image = res.data.recipe.image_url;
             this.url = res.data.recipe.scoure_url;
             this.ingredients = res.data.recipe.ingredients;
+            this.servings = res.data.recipe.servings;
         }catch(error){
             console.log(error);
             alert('Something went wrong2');
@@ -89,4 +90,18 @@ export default class Recipe{
         });
         this.ingredients = newIngredients;
     }
+    updateServings(type){
+        //  Servings
+        const newServings = type === 'dec' ? this.servings -1 : this.servings +1;
+        console.log(newServings)
+        // Ingredients
+        this.ingredients.forEach(ing => {
+            ing.count *= (newServings / this.servings);
+            console.log(ing.count)
+        })
+
+        this.servings = newServings;
+        console.log(this.servings)
+    }
 }
+
